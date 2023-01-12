@@ -1,37 +1,50 @@
-
 const grid = document.querySelector(".bolls");
 const startButton = document.getElementById("start-btn")
 const imageButton = document.getElementById("btnImg")
 const sco = document.getElementById("score")
+
+// left right move buttons 
+const left = document.getElementById("left");
+const bottom = document.getElementById("bottom");
+const right = document.getElementById("right");
+//level counter
+const incrementCount = document.getElementById("increment-count");
+const decrementCount = document.getElementById("decrement-count");
 // Select total count
 const totalCount = document.getElementById("total-count");
-// Variable to track count
-let timer;
-var score = 0;
-let levelcounter = 1;
+const totalIndex = 30;
+const usedIndex =26
+for( i=0;i<totalIndex;i++){
+    const newDiv = document.createElement('div');
+    const Div = grid.appendChild(newDiv)
 
-// Display initial count value
-totalCount.innerHTML = levelcounter;
-
+    if( i>usedIndex){
+        Div.classList.add("freeze")
+    }
+}
 let circle = Array.from(document.querySelectorAll('.bolls div'));
+const maxLevel = 6;
 let count = 0;
 let index = 0;
 const width = 3;
-
-currentPosition = 1;
+let currentPosition = 1;
+let timer;
+const maxRowvalue = 27;
+const maxColumnValue = 21;
+var score = 0;
+let levelcounter = 1;
 const colors_array = ["yellow", "pink", "red", "skyblue"];
 let random = Math.floor(Math.random() * colors_array.length)
 let currentcircle = colors_array[random];
-
+// Display initial count value
+totalCount.innerHTML = levelcounter;
 function colorcreate() {
-    // circle[currentPosition + index].style.background = currentcircle;
     circle[currentPosition + index].classList.add(currentcircle);
 }
 colorcreate();
 
 // erase
 function erase() {
-    // circle[currentPosition + index].style.background = '';
     circle[currentPosition + index].classList.remove(currentcircle)
 }
 function moveDown() {
@@ -40,31 +53,24 @@ function moveDown() {
     colorcreate();
     stop();
 }
+let levelCounter = {
+    "1": 2000,
+    "2": 1500,
+    "3": 1000,
+    "4": 800,
+    "5": 500,
+    "6": 400,
+    "7": 300,
+}
 function countTheLevel() {
     var level_speed = parseInt((document.getElementById('total-count').innerHTML));
     if (timer) {
         clearInterval(timer);
     }
-    if (level_speed == 1) {
-        timer = setInterval(moveDown, 2000);
-    }else if (level_speed == 2) {
-        timer = setInterval(moveDown, 1500);
-    }else if (level_speed == 3) {
-        timer = setInterval(moveDown, 1000);
-    }else if (level_speed == 4) {
-        timer = setInterval(moveDown, 800);
-    }else if (level_speed == 5) {
-        timer = setInterval(moveDown, 500);
-    }else if (level_speed == 6) {
-        timer = setInterval(moveDown, 200);
-    }else if (level_speed == 7) {
-        timer = setInterval(moveDown, 100);
-    }
+    timer = setInterval(moveDown, levelCounter[level_speed]);
 }
 countTheLevel();
-
 // stop function
-
 function stop() {
     if (circle[currentPosition + index + width].classList.contains("freeze")) {
         circle[currentPosition + index].classList.add("freeze")
@@ -77,8 +83,6 @@ function stop() {
         addScore();
     }
 }
-
-
 function control(e) {
     if (e.keyCode === 37) {
         moveLeft();
@@ -122,40 +126,25 @@ function pause() {
 startButton.addEventListener("click", pause);
 
 // below buttons
-const left = document.getElementById("left");
-const bottom = document.getElementById("bottom");
-const right = document.getElementById("right");
-
 left.addEventListener("click", moveLeft);
 right.addEventListener("click", moveRight);
 bottom.addEventListener("click", moveDown);
-
 //game over 
 function gameover() {
-    
-     const rowOver = [3,4,5];
-     if (rowOver.some(index => circle[index].classList.contains("freeze"))){
+    const rowOver = [3, 4, 5];
+    if (rowOver.some(index => circle[index].classList.contains("freeze"))) {
         console.log("yess");
         sco.innerHTML = "Game Over";
         clearInterval(timer);
         alert(`game over Your score is:: ${score}`);
-
-     }
-
-    
-    
-    // if (circle[currentPosition + width ].classList.contains("freeze")) {
-    //     sco.innerHTML = "Game Over";
-    //     clearInterval(timer);
-    //     alert(`game over Your score is:: ${score}`);
-    //  }
+    }
 }
 
 // addscore and bolls  disappear
 function addScore() {
-    for (let i = 0; i < 27; i += width) {
+    for (let i = 0; i < maxRowvalue; i += width) {
         const row = [i, i + 1, i + 2];
-        colors_array.forEach(function(item) {
+        colors_array.forEach(function (item) {
             if (row.every(index => circle[index].classList.contains(item))) {
                 score += 10;
                 sco.textContent = `score:${score}`
@@ -170,10 +159,10 @@ function addScore() {
                 circle.forEach(circles => grid.appendChild(circles))
             }
         });
-}
-    for (let i = 0; i < 21; i++) {
+    }
+    for (let i = 0; i < maxColumnValue; i++) {
         const column = [i, i + width, i + (width * 2)];
-        colors_array.forEach(function(item) {
+        colors_array.forEach(function (item) {
             if (column.every(index => circle[index].classList.contains(item))) {
                 score += 10;
                 sco.textContent = `score:${score}`
@@ -181,17 +170,16 @@ function addScore() {
                     circle[index].classList.remove("freeze");
                     circle[index].classList.remove(item);
                     circle[index].style.background = '';
-                    })
-                }
-            });
-        }
+                })
+            }
+        });
     }
-       
+}
 // level 
 // Function to Increment count
 const handleIncrement = () => {
-    if (levelcounter > 6) {
-        levelcounter = 6;
+    if (levelcounter > maxLevel) {
+        levelcounter = maxLevel;
     }
     levelcounter++;
     totalCount.innerHTML = levelcounter;
@@ -206,9 +194,6 @@ const handleDecrement = () => {
     }
     totalCount.innerHTML = levelcounter;
 };
-const incrementCount = document.getElementById("increment-count");
-const decrementCount = document.getElementById("decrement-count");
-
 incrementCount.addEventListener("click", handleIncrement);
 decrementCount.addEventListener("click", handleDecrement);
 
