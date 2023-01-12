@@ -13,12 +13,12 @@ const decrementCount = document.getElementById("decrement-count");
 // Select total count
 const totalCount = document.getElementById("total-count");
 const totalIndex = 30;
-const usedIndex =26
-for( i=0;i<totalIndex;i++){
+const usedIndex = 26
+for (i = 0; i < totalIndex; i++) {
     const newDiv = document.createElement('div');
     const Div = grid.appendChild(newDiv)
 
-    if( i>usedIndex){
+    if (i > usedIndex) {
         Div.classList.add("freeze")
     }
 }
